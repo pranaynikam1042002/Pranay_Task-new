@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid Renderer</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr); /* 20 columns */
+            grid-template-rows: repeat(50, 1fr);    /* 50 rows */
+            gap: 1px; /* Gap between cells */
+            width: 100vw;
+            height: 100vh;
+        }
+        .grid-item {
+            background: white;
+            border: 1px solid lightgray;
+            box-sizing: border-box;
+            padding: 5px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            text-align: left;
+            cursor: text;
+        }
+        .toolbar {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #f3f3f3;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar">
+        <input type="text" id="search-input" placeholder="Search...">
+        <select id="text-align">
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+        </select>
+        <select id="font-size">
+            <option value="12px">12px</option>
+            <option value="14px" selected>14px</option>
+            <option value="16px">16px</option>
+            <option value="18px">18px</option>
+        </select>
+        <button id="prev-page">Previous</button>
+    <span id="page-info"></span>
+    <button id="next-page">Next</button>
+    <button id="undo">Undo</button>
+<button id="redo">Redo</button>
+
+    </div>
+    <div class="grid-container">
+        <!-- JavaScript will populate the grid cells here -->
+         
+    </div>
+    
+
+    <script>
+        const gridContainer = document.querySelector('.grid-container');
+        const rows = 50;
+        const columns = 20;
+        const cellData = Array(rows).fill().map(() => Array(columns).fill(''));
+        let selectedCell = null;
+
+        gridContainer.addEventListener('input', (event) => {
+            const cell = event.target;
+            const index = Array.from(gridContainer.children).indexOf(cell);
+            const row = Math.floor(index / columns);
+            const col = index % columns;
+            cellData[row][col] = cell.innerText;
+        });
+
+        gridContainer.addEventListener('click', (event) => {
+            selectedCell = event.target;
+        });
+
+        document.getElementById('text-align').addEventListener('change', (event) => {
+            if (selectedCell) {
+                selectedCell.style.textAlign = event.target.value;
+            }
+        });
+
+        document.getElementById('font-size').addEventListener('change', (event) => {
+            if (selectedCell) {
+                selectedCell.style.fontSize = event.target.value;
+            }
+        });
+
+        for (let i = 0; i < rows * columns; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-item';
+            cell.contentEditable = true; // Make cell editable
+            gridContainer.appendChild(cell);
+        }
+        document.getElementById('search-input').addEventListener('input', (event) => {
+        const query = event.target.value.toLowerCase();
+        Array.from(gridContainer.children).forEach((cell) => {
+            if (cell.innerText.toLowerCase().includes(query)) {
+                cell.style.backgroundColor = 'yellow';
+            } else {
+                cell.style.backgroundColor = 'white';
+            }
+        });
+    });
+    document.getElementById('undo').addEventListener('click', undo);
+    document.getElementById('redo').addEventListener('click', redo);
+    
+    </script>
+</body>
+</html>

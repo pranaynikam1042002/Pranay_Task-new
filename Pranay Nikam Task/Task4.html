@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid with Pagination</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr); /* Adjust based on your grid requirements */
+            gap: 5px;
+            margin: 20px 0;
+        }
+        .grid-item {
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        .pagination button {
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+        .pagination button:disabled {
+            background-color: #e0e0e0;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid-container">
+        <!-- Grid cells will be populated here by JavaScript -->
+    </div>
+
+    <div class="pagination">
+        <button id="prevPage">Previous</button>
+        <span id="pageInfo">Page 1</span>
+        <button id="nextPage">Next</button>
+    </div>
+
+    <script>
+        const itemsPerPage = 20; // Adjust based on your needs
+        const totalItems = 200;  // Total number of items in your dataset
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+        let currentPage = 1;
+
+        function renderPage(page) {
+            const gridContainer = document.querySelector('.grid-container');
+            gridContainer.innerHTML = ''; // Clear previous content
+            const start = (page - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            for (let i = start; i < end && i < totalItems; i++) {
+                const item = document.createElement('div');
+                item.className = 'grid-item';
+                item.textContent = `Item ${i + 1}`;
+                gridContainer.appendChild(item);
+            }
+
+            document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
+            document.getElementById('prevPage').disabled = page === 1;
+            document.getElementById('nextPage').disabled = page === totalPages;
+        }
+
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage(currentPage);
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage(currentPage);
+            }
+        });
+
+        // Initial rendering
+        renderPage(currentPage);
+    </script>
+
+</body>
+</html>
